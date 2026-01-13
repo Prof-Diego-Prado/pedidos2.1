@@ -89,7 +89,8 @@
                         </h2>
                         <span class="text-xs font-semibold bg-gray-100 text-gray-600 px-2 py-1 rounded-full" id="count-prof">0 itens</span>
                     </div>
-                    <div id="professional-list" class="space-y-3 max-h-[600px] overflow-y-auto pr-2 modal-scroll"></div>
+                    <!-- Lista com suporte a scroll e grid interno para headers -->
+                    <div id="professional-list" class="space-y-1 max-h-[600px] overflow-y-auto pr-2 modal-scroll"></div>
                 </div>
 
                 <!-- Coluna Home Care -->
@@ -100,7 +101,7 @@
                         </h2>
                         <span class="text-xs font-semibold bg-gray-100 text-gray-600 px-2 py-1 rounded-full" id="count-home">0 itens</span>
                     </div>
-                    <div id="homecare-list" class="space-y-3 max-h-[600px] overflow-y-auto pr-2 modal-scroll"></div>
+                    <div id="homecare-list" class="space-y-1 max-h-[600px] overflow-y-auto pr-2 modal-scroll"></div>
                 </div>
             </div>
 
@@ -222,24 +223,26 @@
         // --- DADOS DO CLIENTE E SISTEMA ---
         const WHATSAPP_NUMBER = "5545988297306"; 
         const CONTACT_NAME = "Alessandra";
+
+        // --- HELPER PARA CRIAR SEÇÕES ---
+        const addSection = (arr, sectionName) => arr.map(p => ({ ...p, section: sectionName }));
         
-        // --- DADOS DOS PRODUTOS ---
-        // ATENÇÃO: Adicionei a propriedade 'multiVariant: true' apenas para as tinturas solicitadas.
-        const produtosProfissionais = [
+        // --- DADOS DOS PRODUTOS PROFISSIONAIS ---
+        const prof_Descolorantes = [
             { name: "Pó Air Libre 500g", price: 131.48, category: "Profissional", needsCode: false },
             { name: "Pó Blanc Blond 500g", price: 131.48, category: "Profissional", needsCode: false },
             { name: "8x Powder 200g", price: 331.48, category: "Profissional", needsCode: false },
-            { name: "Água Oxigenada 950ml", price: 69.21, category: "Profissional", needsCode: true }, 
+            { name: "Água Oxigenada 950ml", price: 69.21, category: "Profissional", needsCode: true, blockedCodes: ['20', '30'] }, 
+        ];
+        const prof_Coloracao = [
             { name: "9 Ampolas Hydra Color 17ml", price: 152.99, category: "Profissional", needsCode: false },
-            
-            // --- PRODUTOS MODIFICADOS PARA MÚLTIPLAS CORES ---
-            { name: "Truss Color Permanente 60g", price: 30.29, category: "Profissional", needsCode: true, multiVariant: true },
+            { name: "Truss Color Permanente 60g", price: 30.29, category: "Profissional", needsCode: true, multiVariant: true, blockedCodes: ['1.0', '6.1', '7.3', '7.46', '8.0'] },
             { name: "Truss Color Semipermanente 60g", price: 30.29, category: "Profissional", needsCode: true, multiVariant: true },
-            // ------------------------------------------------
-            
             { name: "Color Perfect Blond Matizador 60g", price: 34.97, category: "Profissional", needsCode: true },
             { name: "Skin Protector 50g", price: 51.00, category: "Profissional", needsCode: false },
             { name: "Papel Sustentável 120 fls", price: 38.90, category: "Profissional", needsCode: false },
+        ];
+        const prof_Tratamentos = [
             { name: "Infusion Profissional 650ml", price: 318.73, category: "Profissional", needsCode: false },
             { name: "K Recovery 650ml", price: 458.98, category: "Profissional", needsCode: false },
             { name: "Scrub Therapy 170g", price: 199.98, category: "Profissional", needsCode: false },
@@ -253,23 +256,33 @@
             { name: "Protector Plus 650ml", price: 201.93, category: "Profissional", needsCode: false },
             { name: "Volume Therapy 650ml", price: 206.54, category: "Profissional", needsCode: false },
             { name: "Acid Anti-Breakage 400ml", price: 299.99, category: "Profissional", needsCode: false },
+            { name: "Refil Nutrition Wax Infusion", price: 0.00, category: "Profissional", needsCode: false, outOfStock: true }, 
+        ];
+        const prof_Lavatorio = [
             { name: "Shampoo Bidimensional (Pouch) 1L", price: 173.41, category: "Profissional", needsCode: false },
-            { name: "Shampoo Basic 2,4L", price: 216.71, category: "Profissional", needsCode: false },
+            { name: "Shampoo Basic 2,4L", price: 216.71, category: "Profissional", needsCode: false, outOfStock: true },
             { name: "Condicionador Basic 2,4L", price: 229.49, category: "Profissional", needsCode: false },
+            { name: "Condicionador Basic 1L", price: 0.00, category: "Profissional", needsCode: false, outOfStock: true },
+            { name: "Condicionador Nutri Infusion 1L", price: 0.00, category: "Profissional", needsCode: false, outOfStock: true },
         ];
 
-        const produtosHomeCare = [
+        // --- DADOS DOS PRODUTOS HOME CARE ---
+        const hc_Shampoos300 = [
             { name: "Shampoo Equilibrium 300ml", price: 88.02, category: "Home Care", needsCode: false },
             { name: "Shampoo Infusion 300ml", price: 88.02, category: "Home Care", needsCode: false },
             { name: "Shampoo Ultra Hydration 300ml", price: 88.02, category: "Home Care", needsCode: false },
             { name: "Shampoo Ultra Hydration Plus 300ml", price: 88.02, category: "Home Care", needsCode: false },
             { name: "Shampoo Blond 300ml", price: 88.02, category: "Home Care", needsCode: false },
-            { name: "Shampoo Miracle 300ml", price: 88.02, category: "Home Care", needsCode: false },
-            { name: "Shampoo Miracle Summer 300ml", price: 88.02, category: "Home Care", needsCode: false },
-            { name: "Shampoo Structure 300ml", price: 88.02, category: "Home Care", needsCode: false },
-            { name: "Shampoo Color 300ml", price: 88.02, category: "Home Care", needsCode: false },
+            { name: "Shampoo Miracle 300ml", price: 88.02, category: "Home Care", needsCode: false, outOfStock: true },
+            { name: "Shampoo Miracle Summer 300ml", price: 88.02, category: "Home Care", needsCode: false, outOfStock: true },
+            { name: "Shampoo Structure 300ml", price: 88.02, category: "Home Care", needsCode: false, outOfStock: true },
+            { name: "Shampoo Color 300ml", price: 88.02, category: "Home Care", needsCode: false, outOfStock: true },
             { name: "Shampoo Curly 300ml", price: 88.02, category: "Home Care", needsCode: false },
             { name: "Shampoo Perfect 300ml", price: 88.02, category: "Home Care", needsCode: false },
+            { name: "Shampoo Uso Obrigatório RPK", price: 0.00, category: "Home Care", needsCode: false, outOfStock: true },
+            { name: "Shampoo No Metal 300ml", price: 0.00, category: "Home Care", needsCode: false, outOfStock: true },
+        ];
+        const hc_Cond300 = [
             { name: "Condicionador Equilibrium 300ml", price: 95.99, category: "Home Care", needsCode: false },
             { name: "Condicionador Infusion 300ml", price: 95.99, category: "Home Care", needsCode: false },
             { name: "Condicionador Ultra Hydration 300ml", price: 95.99, category: "Home Care", needsCode: false },
@@ -281,61 +294,93 @@
             { name: "Condicionador Color 300ml", price: 95.99, category: "Home Care", needsCode: false },
             { name: "Condicionador Curly 300ml", price: 95.99, category: "Home Care", needsCode: false },
             { name: "Condicionador Perfect 300ml", price: 95.99, category: "Home Care", needsCode: false },
+            { name: "Condicionador Uso Obrigatório Plus", price: 0.00, category: "Home Care", needsCode: false, outOfStock: true },
+        ];
+        const hc_Masks = [
             { name: "Mask Miracle 180g", price: 127.99, category: "Home Care", needsCode: false },
-            { name: "Mask Miracle Summer 180g", price: 127.99, category: "Home Care", needsCode: false },
+            { name: "Mask Miracle Summer 180g", price: 127.99, category: "Home Care", needsCode: false, outOfStock: true },
             { name: "Mask Blond 180g", price: 127.99, category: "Home Care", needsCode: false },
             { name: "Mask Specific 180g", price: 127.99, category: "Home Care", needsCode: false },
             { name: "Mask Perfect 180g", price: 127.99, category: "Home Care", needsCode: false },
             { name: "Mask Uso Obrigatório 180g", price: 127.99, category: "Home Care", needsCode: false },
-            { name: "Mask Uso Obrigatório Plus+ 180g", price: 127.99, category: "Home Care", needsCode: false },
+            { name: "Mask Uso Obrigatório Plus+ 180g", price: 127.99, category: "Home Care", needsCode: false, outOfStock: true },
             { name: "Net Mask 550g", price: 239.99, category: "Home Care", needsCode: false },
             { name: "Net Mask Blond Revolution 550g", price: 129.90, category: "Home Care", needsCode: false },
+            { name: "Máscara Uso Obrigatório RPK", price: 0.00, category: "Home Care", needsCode: false, outOfStock: true },
+            { name: "Mask Nutri Infusion 180g", price: 0.00, category: "Home Care", needsCode: false, outOfStock: true },
+            { name: "Mask No Metal 180g", price: 0.00, category: "Home Care", needsCode: false, outOfStock: true },
+        ];
+        const hc_Finalizadores = [
             { name: "Friz.zerro", price: 127.48, category: "Home Care", needsCode: false },
             { name: "Hair Protector", price: 127.48, category: "Home Care", needsCode: false },
-            { name: "Day by Day", price: 103.99, category: "Home Care", needsCode: false },
-            { name: "Body & Volume", price: 103.99, category: "Home Care", needsCode: false },
+            { name: "Day by Day", price: 103.99, category: "Home Care", needsCode: false, outOfStock: true },
+            { name: "Body & Volume", price: 103.99, category: "Home Care", needsCode: false, outOfStock: true },
             { name: "Brush Keratin", price: 103.99, category: "Home Care", needsCode: false },
             { name: "Curly Light", price: 103.99, category: "Home Care", needsCode: false },
             { name: "Curly Fix", price: 103.99, category: "Home Care", needsCode: false },
             { name: "Beach Waves", price: 128.00, category: "Home Care", needsCode: false },
             { name: "Fluid Fix", price: 100.78, category: "Home Care", needsCode: false },
             { name: "Amino", price: 183.97, category: "Home Care", needsCode: false },
-            { name: "Night Spa", price: 135.99, category: "Home Care", needsCode: false },
+            { name: "Night Spa", price: 135.99, category: "Home Care", needsCode: false, outOfStock: true },
             { name: "#CrazyForTruss", price: 167.99, category: "Home Care", needsCode: false },
             { name: "Shock Repair 4 ampolas", price: 95.99, category: "Home Care", needsCode: false },
             { name: "Spray Uso Obrigatório 260ml", price: 159.99, category: "Home Care", needsCode: false },
             { name: "Spray Uso Obrigatório Plus+ 260ml", price: 159.99, category: "Home Care", needsCode: false },
+            { name: "Acqua Gel", price: 0.00, category: "Home Care", needsCode: false, outOfStock: true },
+            { name: "Óleo Uso Obrigatório 30ml", price: 0.00, category: "Home Care", needsCode: false, outOfStock: true },
+            { name: "Óleo Uso Obrigatório 60ml", price: 0.00, category: "Home Care", needsCode: false, outOfStock: true },
+            { name: "Spray Uso Miracle Summer", price: 0.00, category: "Home Care", needsCode: false, outOfStock: true },
+            { name: "Stay Fix Strong", price: 0.00, category: "Home Care", needsCode: false, outOfStock: true },
+        ];
+        
+        const hc_Shampoo1L = [
+            { name: "Shampoo Equilibrium 1L", price: 203.99, category: "Home Care", needsCode: false, outOfStock: true },
+            { name: "Shampoo Infusion 1L", price: 203.99, category: "Home Care", needsCode: false },
+            { name: "Shampoo Uso Obrigatório 1L", price: 159.99, category: "Home Care", needsCode: false, outOfStock: true },
+            { name: "Therapy Shampoo", price: 199.99, category: "Home Care", needsCode: false },
+            { name: "Shampoo Nutri Infusion 1L", price: 203.99, category: "Home Care", needsCode: false, outOfStock: true },
+        ];
+        const hc_Cond1L = [
+            { name: "Condicionador Equilibrium 1L", price: 216.75, category: "Home Care", needsCode: false },
+            { name: "Condicionador Infusion 1L", price: 216.75, category: "Home Care", needsCode: false },
+            { name: "Condi. Uso Obrigatório 1L", price: 169.90, category: "Home Care", needsCode: false },
+        ];
+        const hc_Minis = [
+            { name: "Spray Frizz Zero (Mini)", price: 30.59, category: "Home Care", needsCode: false },
+            { name: "Spray Amino (Mini)", price: 30.59, category: "Home Care", needsCode: false },
+            { name: "Shampoo Infusion (Mini)", price: 30.59, category: "Home Care", needsCode: false },
+            { name: "Shampoo Uso Obrigatório (Mini)", price: 30.59, category: "Home Care", needsCode: false },
+            { name: "Shampoo Uso Obrig. Plus+ (Mini)", price: 30.59, category: "Home Care", needsCode: false },
+            { name: "Condicionador Infusion (Mini)", price: 30.59, category: "Home Care", needsCode: false },
+            { name: "Condi. Uso Obrigatório (Mini)", price: 30.59, category: "Home Care", needsCode: false },
+            { name: "Condi. Uso Obrig. Plus+ (Mini)", price: 30.59, category: "Home Care", needsCode: false },
+            { name: "Net Mask (Mini)", price: 30.59, category: "Home Care", needsCode: false },
+            { name: "Mask Uso Obrigatório (Mini)", price: 30.59, category: "Home Care", needsCode: false },
+        ];
+
+        // --- CONSTRUÇÃO FINAL DOS ARRAYS COM SEÇÕES ---
+        const produtosProfissionais = [
+            ...addSection(prof_Descolorantes, "Descolorantes & Oxidantes"),
+            ...addSection(prof_Coloracao, "Coloração & Auxiliares"),
+            ...addSection(prof_Tratamentos, "Tratamentos Work Station"),
+            ...addSection(prof_Lavatorio, "Lavatório & Pouchs"),
+        ];
+
+        const produtosHomeCare = [
+            ...addSection(hc_Shampoos300, "Shampoos 300ml"),
+            ...addSection(hc_Cond300, "Condicionadores 300ml"),
+            ...addSection(hc_Shampoo1L, "Shampoos & Tratamentos 1L / Lavatório"),
+            ...addSection(hc_Cond1L, "Condicionadores 1L / Lavatório"),
+            ...addSection(hc_Masks, "Máscaras"),
+            ...addSection(hc_Finalizadores, "Finalizadores & Leave-in"),
+            ...addSection(hc_Minis, "Minis / Travel Size"),
         ];
         
         let productState = { "Profissional": [], "Home Care": [] };
         let currentPdfDoc = null; 
-
-        // --- REFERÊNCIAS DOM ---
-        const elements = {
-            profList: document.getElementById('professional-list'),
-            homeList: document.getElementById('homecare-list'),
-            container: document.getElementById('product-lists-container'),
-            totalPrice: document.getElementById('total-price'),
-            previewBtn: document.getElementById('preview-pdf-btn'),
-            clearBtn: document.getElementById('clear-order-btn'),
-            messageBox: document.getElementById('message-box'),
-            messageContent: document.getElementById('message-content'),
-            countProf: document.getElementById('count-prof'),
-            countHome: document.getElementById('count-home'),
-            searchInput: document.getElementById('search-input'),
-            tabNewOrder: document.getElementById('tab-new-order'),
-            tabHistory: document.getElementById('tab-history'),
-            tabBtnNew: document.getElementById('tab-btn-new-order'),
-            tabBtnHist: document.getElementById('tab-btn-history'),
-            historyTable: document.getElementById('history-table-body'),
-            emptyHistoryMsg: document.getElementById('empty-history-msg'),
-            modal: document.getElementById('preview-modal'),
-            modalFrame: document.getElementById('pdf-preview-frame'),
-            btnShareSmart: document.getElementById('btn-share-smart'),
-            btnDownloadOnly: document.getElementById('btn-download-only'),
-            mobilePlaceholder: document.getElementById('mobile-pdf-placeholder'),
-            externalPdfLink: document.getElementById('external-pdf-link')
-        };
+        
+        // Declarando elements no escopo global, mas inicializando vazio
+        let elements = {};
 
         // --- SISTEMA DE ABAS ---
         window.switchTab = function(tabName) {
@@ -359,8 +404,16 @@
 
         // --- FUNÇÕES DE FORMATAÇÃO E UI ---
         const formatCurrency = val => val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        const showError = msg => { elements.messageContent.textContent = msg; elements.messageBox.classList.remove('hidden'); };
-        const hideError = () => elements.messageBox.classList.add('hidden');
+        const showError = msg => { 
+            if(elements.messageContent) {
+                elements.messageContent.textContent = msg; 
+                elements.messageBox.classList.remove('hidden');
+                setTimeout(() => elements.messageBox.classList.add('hidden'), 3000);
+            } else {
+                alert(msg);
+            }
+        };
+        const hideError = () => { if(elements.messageBox) elements.messageBox.classList.add('hidden'); };
         const getCurrentMonth = () => {
             const m = new Date().toLocaleString('pt-BR', { month: 'long' });
             return m.charAt(0).toUpperCase() + m.slice(1);
@@ -368,18 +421,19 @@
 
         // --- INICIALIZAÇÃO DE DADOS ---
         function initializeState() {
-            const sortFn = (a, b) => a.name.localeCompare(b.name);
-            productState["Profissional"] = produtosProfissionais.sort(sortFn).map(p => ({ 
+            productState["Profissional"] = produtosProfissionais.map(p => ({ 
                 ...p, 
                 quantity: 0, 
                 code: '',
-                variants: p.multiVariant ? [] : undefined // Inicializa array para variantes se for o caso
+                variants: p.multiVariant ? [] : undefined 
             }));
-            productState["Home Care"] = produtosHomeCare.sort(sortFn).map(p => ({ ...p, quantity: 0, code: '' }));
+            productState["Home Care"] = produtosHomeCare.map(p => ({ ...p, quantity: 0, code: '' }));
         }
 
         // --- RENDERIZAÇÃO DE LISTAS ---
         function renderLists(filter = '') {
+            if(!elements.profList || !elements.homeList) return;
+            
             elements.profList.innerHTML = '';
             elements.homeList.innerHTML = '';
             hideError();
@@ -390,11 +444,25 @@
             const listProf = productState["Profissional"].filter(filterFn);
             const listHome = productState["Home Care"].filter(filterFn);
 
-            listProf.forEach(p => elements.profList.appendChild(createCard(p)));
-            listHome.forEach(p => elements.homeList.appendChild(createCard(p)));
+            const renderWithHeaders = (list, container) => {
+                let lastSection = null;
+                list.forEach(p => {
+                    if (p.section && p.section !== lastSection) {
+                        const header = document.createElement('h3');
+                        header.className = 'col-span-full text-xs font-bold text-gray-400 uppercase tracking-wider mt-4 mb-2 pl-1 border-b border-gray-100 pb-1';
+                        header.innerText = p.section;
+                        container.appendChild(header);
+                        lastSection = p.section;
+                    }
+                    container.appendChild(createCard(p));
+                });
+            };
 
-            elements.countProf.textContent = `${listProf.length} itens`;
-            elements.countHome.textContent = `${listHome.length} itens`;
+            renderWithHeaders(listProf, elements.profList);
+            renderWithHeaders(listHome, elements.homeList);
+
+            if(elements.countProf) elements.countProf.textContent = `${listProf.length} itens`;
+            if(elements.countHome) elements.countHome.textContent = `${listHome.length} itens`;
 
             if (listProf.length === 0) elements.profList.innerHTML = '<p class="text-gray-400 italic text-sm">Nenhum produto encontrado.</p>';
             if (listHome.length === 0) elements.homeList.innerHTML = '<p class="text-gray-400 italic text-sm">Nenhum produto encontrado.</p>';
@@ -402,12 +470,25 @@
 
         function createCard(product) {
             const card = document.createElement('div');
+            const isOutOfStock = product.outOfStock === true;
+
+            const outOfStockClasses = isOutOfStock ? 'bg-gray-100 border-red-100 opacity-75' : 'bg-white border-gray-100 hover:border-blue-200';
+            const activeClasses = (product.quantity > 0 || (product.variants && product.variants.length > 0)) && !isOutOfStock 
+                ? 'bg-blue-50 border-blue-300 shadow-md' 
+                : outOfStockClasses;
             
-            // Lógica Diferente para Produtos "Multi-Variação" (Tinturas)
+            card.className = `p-3 mb-2 rounded-lg border transition-all duration-200 flex flex-col justify-between relative overflow-hidden ${activeClasses}`;
+            
+            let badgeHTML = '';
+            if (isOutOfStock) {
+                badgeHTML = `
+                    <div class="absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-bl-lg shadow-sm z-10">
+                        ESGOTADO
+                    </div>
+                `;
+            }
+
             if (product.multiVariant) {
-                const isActive = product.variants.length > 0;
-                card.className = `p-3 rounded-lg border transition-all duration-200 flex flex-col justify-between ${isActive ? 'bg-blue-50 border-blue-300 shadow-md' : 'bg-white border-gray-100 hover:border-blue-200'}`;
-                
                 let variantsListHTML = '';
                 if(product.variants.length > 0) {
                     variantsListHTML = '<div class="mt-3 bg-white rounded border border-gray-200 divide-y divide-gray-100">';
@@ -425,23 +506,24 @@
                 }
 
                 card.innerHTML = `
-                    <div class="mb-2">
+                    ${badgeHTML}
+                    <div class="mb-2 pr-12">
                         <div class="flex justify-between items-start gap-2">
-                            <span class="text-sm font-bold text-gray-800 leading-tight">${product.name}</span>
+                            <span class="text-sm font-bold text-gray-800 leading-tight ${isOutOfStock ? 'text-gray-500' : ''}">${product.name}</span>
                             <span class="text-xs font-bold text-gray-600 bg-gray-100 px-1.5 py-0.5 rounded">${formatCurrency(product.price)}</span>
                         </div>
                     </div>
                     
-                    <div class="flex gap-2 items-end mt-1">
+                    <div class="flex gap-2 items-end mt-1 ${isOutOfStock ? 'opacity-50 pointer-events-none' : ''}">
                         <div class="flex-grow">
                             <label class="text-[10px] text-gray-500 uppercase font-bold">Numeração/Cor</label>
-                            <input type="text" class="variant-code-input w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none" placeholder="Ex: 7.0">
+                            <input type="text" ${isOutOfStock ? 'disabled' : ''} class="variant-code-input w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none disabled:bg-gray-200" placeholder="Ex: 7.0">
                         </div>
                         <div class="w-16">
                             <label class="text-[10px] text-gray-500 uppercase font-bold">Qtd</label>
-                            <input type="number" min="1" value="1" class="variant-qty-input w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none text-center">
+                            <input type="number" min="1" value="1" ${isOutOfStock ? 'disabled' : ''} class="variant-qty-input w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none text-center disabled:bg-gray-200">
                         </div>
-                        <button class="add-variant-btn h-[34px] px-3 bg-blue-600 text-white rounded hover:bg-blue-700 transition flex items-center justify-center">
+                        <button ${isOutOfStock ? 'disabled' : ''} class="add-variant-btn h-[34px] px-3 bg-blue-600 text-white rounded hover:bg-blue-700 transition flex items-center justify-center disabled:bg-gray-400">
                             <i class="ph ph-plus font-bold"></i>
                         </button>
                     </div>
@@ -449,116 +531,138 @@
                     ${variantsListHTML}
                 `;
 
-                // Event Listeners para Multi-Variant
-                const addBtn = card.querySelector('.add-variant-btn');
-                const codeInput = card.querySelector('.variant-code-input');
-                const qtyInput = card.querySelector('.variant-qty-input');
+                if (!isOutOfStock) {
+                    const addBtn = card.querySelector('.add-variant-btn');
+                    const codeInput = card.querySelector('.variant-code-input');
+                    const qtyInput = card.querySelector('.variant-qty-input');
 
-                addBtn.addEventListener('click', () => {
-                    const code = codeInput.value.trim();
-                    const qty = parseInt(qtyInput.value);
+                    addBtn.addEventListener('click', () => {
+                        const code = codeInput.value.trim();
+                        const qty = parseInt(qtyInput.value);
 
-                    if (!code) {
-                        codeInput.classList.add('flash-error');
-                        return;
-                    }
-                    if (qty <= 0) return;
+                        if (!code) {
+                            codeInput.classList.add('flash-error');
+                            return;
+                        }
+                        
+                        if (product.blockedCodes && product.blockedCodes.includes(code)) {
+                            showError(`A variação "${code}" está em falta no estoque.`);
+                            codeInput.classList.add('flash-error');
+                            setTimeout(() => codeInput.classList.remove('flash-error'), 500);
+                            return;
+                        }
 
-                    product.variants.push({ code: code, quantity: qty });
-                    // Limpa inputs
-                    codeInput.value = '';
-                    qtyInput.value = '1';
-                    codeInput.focus();
-                    
-                    // Re-renderiza o card para mostrar a lista atualizada
-                    card.replaceWith(createCard(product));
-                    updateTotal();
-                });
+                        if (qty <= 0) return;
 
-                // Remover Variantes
-                card.querySelectorAll('.remove-variant-btn').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        const idx = parseInt(e.currentTarget.dataset.index);
-                        product.variants.splice(idx, 1);
+                        product.variants.push({ code: code, quantity: qty });
+                        codeInput.value = '';
+                        qtyInput.value = '1';
+                        codeInput.focus();
+                        
                         card.replaceWith(createCard(product));
                         updateTotal();
                     });
-                });
+
+                    card.querySelectorAll('.remove-variant-btn').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            const idx = parseInt(e.currentTarget.dataset.index);
+                            product.variants.splice(idx, 1);
+                            card.replaceWith(createCard(product));
+                            updateTotal();
+                        });
+                    });
+                }
 
             } else {
-                // --- Lógica Padrão para outros produtos ---
-                const isActive = product.quantity > 0;
-                card.className = `p-3 rounded-lg border transition-all duration-200 flex flex-col justify-between ${isActive ? 'bg-blue-50 border-blue-300 shadow-md transform scale-[1.01]' : 'bg-white border-gray-100 hover:border-blue-200'}`;
-                
                 card.dataset.name = product.name;
                 card.dataset.category = product.category;
 
                 const codeInput = product.needsCode ? `
-                    <div class="mt-2 mb-1">
-                        <input type="text" class="color-code-input w-full px-2 py-1.5 text-xs border border-gray-300 rounded focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none" 
+                    <div class="mt-2 mb-1 ${isOutOfStock ? 'opacity-50 pointer-events-none' : ''}">
+                        <input type="text" ${isOutOfStock ? 'disabled' : ''} class="color-code-input w-full px-2 py-1.5 text-xs border border-gray-300 rounded focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none disabled:bg-gray-200" 
                             placeholder="Digite Cor/Vol" value="${product.code}">
                     </div>` : '';
 
                 card.innerHTML = `
-                    <div>
+                    ${badgeHTML}
+                    <div class="pr-12">
                         <div class="flex justify-between items-start gap-2">
-                            <span class="text-sm font-medium text-gray-800 leading-tight">${product.name}</span>
+                            <span class="text-sm font-medium text-gray-800 leading-tight ${isOutOfStock ? 'text-gray-500' : ''}">${product.name}</span>
                             <span class="text-xs font-bold text-gray-600 bg-gray-100 px-1.5 py-0.5 rounded">${formatCurrency(product.price)}</span>
                         </div>
                         ${codeInput}
                     </div>
-                    <div class="flex items-center justify-end mt-3 gap-2">
-                        <button class="qty-btn w-7 h-7 rounded border flex items-center justify-center bg-white hover:bg-red-50 hover:text-red-500 transition" data-action="dec">
+                    <div class="flex items-center justify-end mt-3 gap-2 ${isOutOfStock ? 'opacity-50 pointer-events-none' : ''}">
+                        <button ${isOutOfStock ? 'disabled' : ''} class="qty-btn w-7 h-7 rounded border flex items-center justify-center bg-white hover:bg-red-50 hover:text-red-500 transition disabled:bg-gray-100 disabled:text-gray-300" data-action="dec">
                             <i class="ph ph-minus font-bold text-xs"></i>
                         </button>
                         <span class="qty-display w-6 text-center font-bold text-gray-800">${product.quantity}</span>
-                        <button class="qty-btn w-7 h-7 rounded border flex items-center justify-center bg-white hover:bg-green-50 hover:text-green-600 transition" data-action="inc">
+                        <button ${isOutOfStock ? 'disabled' : ''} class="qty-btn w-7 h-7 rounded border flex items-center justify-center bg-white hover:bg-green-50 hover:text-green-600 transition disabled:bg-gray-100 disabled:text-gray-300" data-action="inc">
                             <i class="ph ph-plus font-bold text-xs"></i>
                         </button>
                     </div>
                 `;
                 
-                card.querySelectorAll('.qty-btn').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        const action = e.currentTarget.dataset.action;
-                        updateQuantity(product, action, card);
+                if (!isOutOfStock) {
+                    card.querySelectorAll('.qty-btn').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            const action = e.currentTarget.dataset.action;
+                            updateQuantity(product, action, card);
+                        });
                     });
-                });
 
-                const input = card.querySelector('.color-code-input');
-                if(input) {
-                    input.addEventListener('input', (e) => {
-                        product.code = e.target.value;
-                        if(product.code && product.quantity > 0) hideError();
-                        updateTotal();
-                    });
+                    const input = card.querySelector('.color-code-input');
+                    if(input) {
+                        input.addEventListener('input', (e) => {
+                            const val = e.target.value;
+                            if (product.blockedCodes && product.blockedCodes.includes(val)) {
+                                showError(`A variação "${val}" está em falta.`);
+                                e.target.classList.add('flash-error');
+                                return; 
+                            } else {
+                                e.target.classList.remove('flash-error');
+                            }
+
+                            product.code = val;
+                            updateTotal();
+                        });
+                    }
                 }
             }
 
             return card;
         }
 
-        // --- LÓGICA DE ATUALIZAÇÃO ---
         function updateQuantity(product, action, cardEl) {
             if (action === 'inc') {
                 if (product.needsCode && !product.code) {
                     const input = cardEl.querySelector('.color-code-input');
-                    input.classList.add('flash-error');
-                    input.focus();
-                    setTimeout(() => input.classList.remove('flash-error'), 500);
+                    if(input) {
+                        input.classList.add('flash-error');
+                        input.focus();
+                        setTimeout(() => input.classList.remove('flash-error'), 500);
+                    }
                 }
+                
+                if (product.needsCode && product.blockedCodes && product.blockedCodes.includes(product.code)) {
+                     showError(`A variação "${product.code}" está em falta.`);
+                     return;
+                }
+
                 product.quantity++;
             } else if (action === 'dec' && product.quantity > 0) {
                 product.quantity--;
             }
             
-            cardEl.querySelector('.qty-display').textContent = product.quantity;
+            const qtyDisplay = cardEl.querySelector('.qty-display');
+            if(qtyDisplay) qtyDisplay.textContent = product.quantity;
+            
             if (product.quantity > 0) {
                 cardEl.classList.remove('bg-white', 'border-gray-100');
-                cardEl.classList.add('bg-blue-50', 'border-blue-300', 'shadow-md', 'scale-[1.01]');
+                cardEl.classList.add('bg-blue-50', 'border-blue-300', 'shadow-md');
             } else {
                 cardEl.classList.add('bg-white', 'border-gray-100');
-                cardEl.classList.remove('bg-blue-50', 'border-blue-300', 'shadow-md', 'scale-[1.01]');
+                cardEl.classList.remove('bg-blue-50', 'border-blue-300', 'shadow-md');
             }
             updateTotal();
         }
@@ -569,28 +673,29 @@
             
             all.forEach(p => {
                 if (p.multiVariant) {
-                    // Soma das variantes
                     const variantsTotalQty = p.variants.reduce((acc, v) => acc + v.quantity, 0);
                     total += p.price * variantsTotalQty;
                 } else {
-                    // Lógica padrão
                     if (p.quantity > 0 && (!p.needsCode || (p.needsCode && p.code))) {
-                        total += p.price * p.quantity;
+                        if (p.needsCode && p.blockedCodes && p.blockedCodes.includes(p.code)) {
+                            // Don't add
+                        } else {
+                            total += p.price * p.quantity;
+                        }
                     }
                 }
             });
-            elements.totalPrice.textContent = formatCurrency(total);
+            if(elements.totalPrice) elements.totalPrice.textContent = formatCurrency(total);
         }
 
         function clearOrder() {
             if(!confirm("Tem certeza que deseja limpar todo o pedido?")) return;
             initializeState();
-            elements.searchInput.value = '';
+            if(elements.searchInput) elements.searchInput.value = '';
             renderLists();
             updateTotal();
         }
 
-        // Recupera o pedido em formato "plano" para o PDF
         function getActiveOrder() {
             const all = [...productState["Profissional"], ...productState["Home Care"]];
             let flatItems = [];
@@ -598,7 +703,6 @@
 
             all.forEach(p => {
                 if (p.multiVariant) {
-                    // Adiciona cada variante como um item separado na lista final
                     if (p.variants.length > 0) {
                         p.variants.forEach(v => {
                             flatItems.push({
@@ -614,12 +718,16 @@
                         if (p.needsCode && !p.code) {
                             invalid.push(p);
                         } else {
-                            flatItems.push({
-                                name: p.name,
-                                price: p.price,
-                                code: p.code,
-                                quantity: p.quantity
-                            });
+                            if (p.needsCode && p.blockedCodes && p.blockedCodes.includes(p.code)) {
+                                // Skip
+                            } else {
+                                flatItems.push({
+                                    name: p.name,
+                                    price: p.price,
+                                    code: p.code,
+                                    quantity: p.quantity
+                                });
+                            }
                         }
                     }
                 }
@@ -628,7 +736,6 @@
             return { items: flatItems, invalid };
         }
 
-        // --- GERAÇÃO DE PDF E PREVIEW ---
         function preparePdf() {
             hideError();
             const { items, invalid } = getActiveOrder();
@@ -648,7 +755,6 @@
             const month = getCurrentMonth();
             const today = new Date().toLocaleDateString('pt-BR');
 
-            // Cabeçalho
             doc.setFillColor(30, 58, 138); 
             doc.rect(0, 0, pageWidth, 40, 'F');
             doc.setTextColor(255, 255, 255);
@@ -660,7 +766,6 @@
             doc.setFont(undefined, 'normal');
             doc.text(`Data: ${today}  |  Mês de Referência: ${month}`, pageWidth / 2, 30, { align: 'center' });
 
-            // Tabela
             const tableRows = items.map(item => [
                 item.name,
                 item.code || '-',
@@ -700,7 +805,6 @@
             return { doc, month, totalOrder };
         }
 
-        // --- HISTÓRICO ---
         function saveToHistory(items, total, month, date) {
             const history = JSON.parse(localStorage.getItem('orderHistory') || '[]');
             const newOrder = {
@@ -715,15 +819,16 @@
         }
 
         function renderHistory() {
+            if(!elements.historyTable) return;
             const history = JSON.parse(localStorage.getItem('orderHistory') || '[]');
             const tbody = elements.historyTable;
             tbody.innerHTML = '';
 
             if (history.length === 0) {
-                elements.emptyHistoryMsg.classList.remove('hidden');
+                if(elements.emptyHistoryMsg) elements.emptyHistoryMsg.classList.remove('hidden');
                 return;
             }
-            elements.emptyHistoryMsg.classList.add('hidden');
+            if(elements.emptyHistoryMsg) elements.emptyHistoryMsg.classList.add('hidden');
 
             history.forEach(order => {
                 const tr = document.createElement('tr');
@@ -754,7 +859,19 @@
             renderHistory();
         };
 
-        // --- NOVA LÓGICA DE COMPARTILHAMENTO (WEB SHARE API) ---
+        function downloadPdf() {
+            if (currentPdfDoc) {
+                currentPdfDoc.doc.save(`Pedido_${currentPdfDoc.month}_ErikaDaiany.pdf`);
+            }
+        }
+
+        function fallbackDesktop(msg) {
+            downloadPdf();
+            alert("O PDF foi baixado no seu computador.\n\nO WhatsApp Web será aberto agora. Por favor, arraste o arquivo PDF baixado para a conversa.");
+            const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+            window.open(url, '_blank');
+        }
+
         async function smartShare() {
             if (!currentPdfDoc) return;
 
@@ -763,7 +880,6 @@
             
             const msg = `Bom dia ${CONTACT_NAME}, seguem em anexo o pedido ${currentPdfDoc.month}.`;
 
-            // Tenta Compartilhamento Nativo (Mobile)
             if (navigator.share && navigator.canShare({ files: [file] })) {
                 try {
                     await navigator.share({
@@ -773,27 +889,15 @@
                     });
                 } catch (error) {
                     if (error.name !== 'AbortError') {
-                        // Se falhar (ex: desktop sem suporte), cai no fallback
                         fallbackDesktop(msg);
                     }
                 }
             } else {
-                // Fallback Desktop
                 fallbackDesktop(msg);
             }
         }
 
-        function fallbackDesktop(msg) {
-            // 1. Baixa o arquivo
-            downloadPdf();
-            
-            // 2. Abre o WhatsApp com a mensagem
-            alert("O PDF foi baixado no seu computador.\n\nO WhatsApp Web será aberto agora. Por favor, arraste o arquivo PDF baixado para a conversa.");
-            const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
-            window.open(url, '_blank');
-        }
-
-        // --- AÇÕES DO MODAL ---
+        // --- DEFININDO openPreview E closeModal ANTES DO USO ---
         function openPreview() {
             const result = preparePdf();
             if (!result) return;
@@ -803,44 +907,64 @@
             const pdfBlob = result.doc.output('blob');
             const blobUrl = URL.createObjectURL(pdfBlob);
             
-            elements.modalFrame.src = blobUrl;
-            elements.externalPdfLink.href = blobUrl;
-            elements.modal.classList.remove('hidden');
+            if(elements.modalFrame) elements.modalFrame.src = blobUrl;
+            if(elements.externalPdfLink) elements.externalPdfLink.href = blobUrl;
+            if(elements.modal) elements.modal.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
 
             if (window.innerWidth < 640) {
-                elements.modalFrame.classList.add('hidden');
-                elements.mobilePlaceholder?.classList.remove('hidden');
+                if(elements.modalFrame) elements.modalFrame.classList.add('hidden');
+                if(elements.mobilePlaceholder) elements.mobilePlaceholder.classList.remove('hidden');
             } else {
-                elements.modalFrame.classList.remove('hidden');
-                elements.mobilePlaceholder?.classList.add('hidden');
+                if(elements.modalFrame) elements.modalFrame.classList.remove('hidden');
+                if(elements.mobilePlaceholder) elements.mobilePlaceholder.classList.add('hidden');
             }
         }
 
         window.closeModal = function() {
-            elements.modal.classList.add('hidden');
+            if(elements.modal) elements.modal.classList.add('hidden');
             document.body.style.overflow = 'auto';
-            elements.modalFrame.src = '';
+            if(elements.modalFrame) elements.modalFrame.src = '';
         };
-
-        function downloadPdf() {
-            if (currentPdfDoc) {
-                currentPdfDoc.doc.save(`Pedido_${currentPdfDoc.month}_ErikaDaiany.pdf`);
-            }
-        }
 
         // --- EVENT LISTENERS GLOBAIS ---
         document.addEventListener('DOMContentLoaded', () => {
+            // Inicializa elementos aqui para garantir que o DOM existe
+            elements = {
+                profList: document.getElementById('professional-list'),
+                homeList: document.getElementById('homecare-list'),
+                container: document.getElementById('product-lists-container'),
+                totalPrice: document.getElementById('total-price'),
+                previewBtn: document.getElementById('preview-pdf-btn'),
+                clearBtn: document.getElementById('clear-order-btn'),
+                messageBox: document.getElementById('message-box'),
+                messageContent: document.getElementById('message-content'),
+                countProf: document.getElementById('count-prof'),
+                countHome: document.getElementById('count-home'),
+                searchInput: document.getElementById('search-input'),
+                tabNewOrder: document.getElementById('tab-new-order'),
+                tabHistory: document.getElementById('tab-history'),
+                tabBtnNew: document.getElementById('tab-btn-new-order'),
+                tabBtnHist: document.getElementById('tab-btn-history'),
+                historyTable: document.getElementById('history-table-body'),
+                emptyHistoryMsg: document.getElementById('empty-history-msg'),
+                modal: document.getElementById('preview-modal'),
+                modalFrame: document.getElementById('pdf-preview-frame'),
+                btnShareSmart: document.getElementById('btn-share-smart'),
+                btnDownloadOnly: document.getElementById('btn-download-only'),
+                mobilePlaceholder: document.getElementById('mobile-pdf-placeholder'),
+                externalPdfLink: document.getElementById('external-pdf-link')
+            };
+
             initializeState();
             renderLists();
 
-            elements.searchInput.addEventListener('input', (e) => renderLists(e.target.value));
-            elements.clearBtn.addEventListener('click', clearOrder);
-            elements.previewBtn.addEventListener('click', openPreview);
+            if(elements.searchInput) elements.searchInput.addEventListener('input', (e) => renderLists(e.target.value));
+            if(elements.clearBtn) elements.clearBtn.addEventListener('click', clearOrder);
+            if(elements.previewBtn) elements.previewBtn.addEventListener('click', openPreview);
             
-            // Novos Botões
-            elements.btnShareSmart.addEventListener('click', smartShare);
-            elements.btnDownloadOnly.addEventListener('click', downloadPdf);
+            if(elements.btnShareSmart) elements.btnShareSmart.addEventListener('click', smartShare);
+            if(elements.btnDownloadOnly) elements.btnDownloadOnly.addEventListener('click', downloadPdf);
         });
 
     </script>
