@@ -17,14 +17,12 @@
     <style>
         body { font-family: 'Inter', sans-serif; }
         
-        /* Animação de erro */
         .flash-error { animation: flash-border 0.5s ease-out; }
         @keyframes flash-border {
             0% { border-color: #ef4444; box-shadow: 0 0 4px #ef4444; }
             100% { border-color: #d1d5db; box-shadow: none; }
         }
 
-        /* Estilo da Scrollbar */
         .modal-scroll::-webkit-scrollbar { width: 8px; }
         .modal-scroll::-webkit-scrollbar-track { background: #f1f1f1; }
         .modal-scroll::-webkit-scrollbar-thumb { background: #888; border-radius: 4px; }
@@ -34,18 +32,21 @@
 <body class="bg-gray-100 min-h-screen flex flex-col">
 
     <!-- Cabeçalho / Navegação -->
-    <header class="bg-white shadow-sm sticky top-0 z-10">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <header class="bg-white shadow-sm sticky top-0 z-20">
+        <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center">
                     <i class="ph ph-shopping-cart text-blue-600 text-2xl mr-2"></i>
-                    <h1 class="text-xl font-bold text-gray-800">Studio Erika Daiany</h1>
+                    <h1 class="text-lg sm:text-xl font-bold text-gray-800 leading-tight">Studio Erika Daiany</h1>
                 </div>
-                <nav class="flex space-x-4">
-                    <button onclick="switchTab('new-order')" id="tab-btn-new-order" class="px-3 py-2 rounded-md text-sm font-medium bg-blue-100 text-blue-700">
-                        Novo Pedido
+                <nav class="flex space-x-1 sm:space-x-2">
+                    <button onclick="switchTab('new-order')" id="tab-btn-new-order" class="px-2 sm:px-3 py-2 rounded-md text-xs sm:text-sm font-medium bg-blue-100 text-blue-700 transition-colors">
+                        Pedido
                     </button>
-                    <button onclick="switchTab('history')" id="tab-btn-history" class="px-3 py-2 rounded-md text-sm font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50">
+                    <button onclick="switchTab('price-table')" id="tab-btn-price-table" class="px-2 sm:px-3 py-2 rounded-md text-xs sm:text-sm font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition-colors">
+                        Tabela Preços
+                    </button>
+                    <button onclick="switchTab('history')" id="tab-btn-history" class="px-2 sm:px-3 py-2 rounded-md text-xs sm:text-sm font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition-colors">
                         Histórico
                     </button>
                 </nav>
@@ -53,20 +54,48 @@
         </div>
     </header>
 
-    <main class="flex-grow p-4 md:p-8 max-w-7xl mx-auto w-full">
+    <main class="flex-grow p-3 md:p-8 max-w-7xl mx-auto w-full">
 
         <!-- ABA: NOVO PEDIDO -->
         <div id="tab-new-order" class="space-y-6">
             
-            <!-- Busca -->
-            <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-                <div class="relative">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <i class="ph ph-magnifying-glass text-gray-400"></i>
+            <!-- Busca e Adição Manual -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                <!-- Busca -->
+                <div class="lg:col-span-2 bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="ph ph-magnifying-glass text-gray-400"></i>
+                        </div>
+                        <input type="text" id="search-input" 
+                               class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                               placeholder="Buscar produto (ex: Shampoo, 8.1, Pó)...">
                     </div>
-                    <input type="text" id="search-input" 
-                           class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                           placeholder="Buscar produto (ex: Shampoo, 8.1, Pó)...">
+                </div>
+
+                <!-- Adicionar Manualmente -->
+                <div class="bg-blue-50 p-4 rounded-lg shadow-sm border border-blue-100">
+                    <h3 class="text-xs font-bold text-blue-800 uppercase mb-2 flex items-center gap-1">
+                        <i class="ph ph-plus-circle"></i> Adicionar Item Avulso
+                    </h3>
+                    <div class="flex flex-col gap-2">
+                        <input type="text" id="manual-name" placeholder="Nome do Produto" class="w-full text-xs p-2 border rounded focus:outline-none focus:ring-1 focus:ring-blue-500">
+                        <div class="flex gap-2">
+                            <input type="number" id="manual-price" placeholder="Preço (R$)" class="w-1/2 text-xs p-2 border rounded focus:outline-none focus:ring-1 focus:ring-blue-500">
+                            <input type="number" id="manual-qty" value="1" min="1" placeholder="Qtd" class="w-1/2 text-xs p-2 border rounded focus:outline-none focus:ring-1 focus:ring-blue-500">
+                        </div>
+                        <button id="btn-add-manual" class="w-full bg-blue-600 text-white text-xs font-bold py-2 rounded hover:bg-blue-700 transition">
+                            Adicionar ao Pedido
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lista de Itens Manuais (Aparece só se tiver itens) -->
+            <div id="manual-items-container" class="hidden bg-white p-4 rounded-lg shadow-sm border border-yellow-200 bg-yellow-50">
+                <h3 class="text-sm font-bold text-yellow-800 mb-2 border-b border-yellow-200 pb-1">Itens Adicionados Manualmente</h3>
+                <div id="manual-items-list" class="space-y-2">
+                    <!-- Preenchido via JS -->
                 </div>
             </div>
 
@@ -89,7 +118,6 @@
                         </h2>
                         <span class="text-xs font-semibold bg-gray-100 text-gray-600 px-2 py-1 rounded-full" id="count-prof">0 itens</span>
                     </div>
-                    <!-- Lista com suporte a scroll e grid interno para headers -->
                     <div id="professional-list" class="space-y-1 max-h-[600px] overflow-y-auto pr-2 modal-scroll"></div>
                 </div>
 
@@ -106,7 +134,7 @@
             </div>
 
             <!-- Barra Inferior Fixa -->
-            <div class="sticky bottom-4 mx-auto max-w-7xl">
+            <div class="sticky bottom-4 mx-auto max-w-7xl z-30">
                 <div class="bg-gray-900 text-white p-4 rounded-xl shadow-2xl flex flex-col md:flex-row justify-between items-center gap-4 border border-gray-700">
                     <div class="flex flex-col">
                         <span class="text-gray-400 text-xs uppercase tracking-wider font-semibold">Total do Pedido</span>
@@ -124,6 +152,21 @@
             </div>
         </div>
 
+        <!-- ABA: TABELA DE PREÇOS -->
+        <div id="tab-price-table" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                <div class="flex justify-between items-center mb-6 border-b pb-4">
+                    <h2 class="text-2xl font-bold text-gray-800">Tabela de Preços 2024</h2>
+                    <button onclick="window.print()" class="text-blue-600 hover:text-blue-800 flex items-center text-sm font-medium">
+                        <i class="ph ph-printer mr-2"></i> Imprimir Tabela
+                    </button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8" id="price-table-container">
+                    <!-- Preenchido via JS -->
+                </div>
+            </div>
+        </div>
+
         <!-- ABA: HISTÓRICO -->
         <div id="tab-history" class="hidden space-y-6">
             <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
@@ -133,7 +176,6 @@
                         <i class="ph ph-trash mr-1"></i> Limpar Histórico
                     </button>
                 </div>
-                
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
@@ -145,9 +187,7 @@
                                 <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
                             </tr>
                         </thead>
-                        <tbody id="history-table-body" class="bg-white divide-y divide-gray-200">
-                            <!-- Preenchido via JS -->
-                        </tbody>
+                        <tbody id="history-table-body" class="bg-white divide-y divide-gray-200"></tbody>
                     </table>
                 </div>
                 <div id="empty-history-msg" class="hidden text-center py-10 text-gray-500 italic">
@@ -158,60 +198,44 @@
 
     </main>
 
-    <!-- MODAL DE CONFERÊNCIA E ENVIO -->
+    <!-- MODAL DE CONFERÊNCIA -->
     <div id="preview-modal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            
-            <!-- Background Overlay -->
             <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" onclick="closeModal()"></div>
-
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-
-            <!-- Modal Panel -->
             <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full">
-                
                 <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                     <div class="sm:flex sm:items-start flex-col">
                         <div class="w-full flex justify-between items-center mb-4 border-b pb-2">
-                            <h3 class="text-lg leading-6 font-medium text-gray-900 flex items-center gap-2" id="modal-title">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900 flex items-center gap-2">
                                 <i class="ph ph-file-pdf text-red-500 text-xl"></i> Conferência do Pedido
                             </h3>
-                            <button onclick="closeModal()" class="text-gray-400 hover:text-gray-500">
-                                <i class="ph ph-x text-2xl"></i>
-                            </button>
+                            <button onclick="closeModal()" class="text-gray-400 hover:text-gray-500"><i class="ph ph-x text-2xl"></i></button>
                         </div>
-                        
-                        <!-- Link para abrir externo (Ajuda no Mobile) -->
                         <div class="w-full flex justify-end mb-2">
                             <a id="external-pdf-link" href="#" target="_blank" class="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1 font-medium">
                                 <i class="ph ph-arrows-out-simple"></i> Visualizar em Tela Cheia
                             </a>
                         </div>
-
-                        <!-- Área de Preview do PDF -->
                         <div class="w-full h-[70vh] md:h-[500px] bg-gray-100 rounded-lg border border-gray-300 flex items-center justify-center relative overflow-hidden">
                             <iframe id="pdf-preview-frame" class="w-full h-full rounded-lg" title="PDF Preview"></iframe>
                         </div>
-                        
                         <div class="mt-4 p-3 bg-blue-50 text-blue-800 text-sm rounded-md border border-blue-200">
                             <p class="flex items-start gap-2">
                                 <i class="ph ph-info mt-0.5 font-bold"></i>
-                                <span><strong>Dica:</strong> No celular, ao clicar em "Enviar", escolha o WhatsApp na lista e o PDF será anexado automaticamente. No computador, o PDF será baixado e você poderá arrastá-lo para a conversa.</span>
+                                <span><strong>Dica:</strong> No celular, escolha o WhatsApp ao clicar em Enviar para anexar o PDF automaticamente.</span>
                             </p>
                         </div>
                     </div>
                 </div>
-
                 <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse gap-2">
-                    <!-- Botão Inteligente de Compartilhamento -->
                     <button type="button" id="btn-share-smart" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm items-center gap-2">
-                        <i class="ph ph-share-network text-lg"></i> Enviar Pedido (WhatsApp/Email)
+                        <i class="ph ph-share-network text-lg"></i> Enviar Pedido
                     </button>
-                    
                     <button type="button" id="btn-download-only" class="w-full mt-2 sm:mt-0 inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm items-center gap-2">
                         <i class="ph ph-download-simple text-lg"></i> Baixar
                     </button>
-                    <button type="button" onclick="closeModal()" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                    <button type="button" onclick="closeModal()" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:text-gray-500 focus:outline-none sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
                         Fechar
                     </button>
                 </div>
@@ -227,9 +251,9 @@
         // --- HELPER PARA CRIAR SEÇÕES ---
         const addSection = (arr, sectionName) => arr.map(p => ({ ...p, section: sectionName }));
         
-        // --- DADOS DOS PRODUTOS PROFISSIONAIS ---
+        // --- DADOS PROFISSIONAIS (COMPLETOS) ---
         const prof_Descolorantes = [
-            { name: "Pó Air Libre 500g", price: 131.48, category: "Profissional", needsCode: false },
+            { name: "Pó Air Libre 500g", price: 131.48, category: "Profissional", needsCode: false, outOfStock: true },
             { name: "Pó Blanc Blond 500g", price: 131.48, category: "Profissional", needsCode: false },
             { name: "8x Powder 200g", price: 331.48, category: "Profissional", needsCode: false },
             { name: "Água Oxigenada 950ml", price: 69.21, category: "Profissional", needsCode: true, blockedCodes: ['20', '30'] }, 
@@ -266,7 +290,7 @@
             { name: "Condicionador Nutri Infusion 1L", price: 0.00, category: "Profissional", needsCode: false, outOfStock: true },
         ];
 
-        // --- DADOS DOS PRODUTOS HOME CARE ---
+        // --- DADOS HOME CARE (COMPLETOS) ---
         const hc_Shampoos300 = [
             { name: "Shampoo Equilibrium 300ml", price: 88.02, category: "Home Care", needsCode: false },
             { name: "Shampoo Infusion 300ml", price: 88.02, category: "Home Care", needsCode: false },
@@ -279,6 +303,8 @@
             { name: "Shampoo Color 300ml", price: 88.02, category: "Home Care", needsCode: false, outOfStock: true },
             { name: "Shampoo Curly 300ml", price: 88.02, category: "Home Care", needsCode: false },
             { name: "Shampoo Perfect 300ml", price: 88.02, category: "Home Care", needsCode: false },
+            { name: "Shampoo Frizz Zero 300ml", price: 88.02, category: "Home Care", needsCode: false },
+            { name: "Shampoo Uso Obrigatório 300ml", price: 88.02, category: "Home Care", needsCode: false },
             { name: "Shampoo Uso Obrigatório RPK", price: 0.00, category: "Home Care", needsCode: false, outOfStock: true },
             { name: "Shampoo No Metal 300ml", price: 0.00, category: "Home Care", needsCode: false, outOfStock: true },
         ];
@@ -294,6 +320,8 @@
             { name: "Condicionador Color 300ml", price: 95.99, category: "Home Care", needsCode: false },
             { name: "Condicionador Curly 300ml", price: 95.99, category: "Home Care", needsCode: false },
             { name: "Condicionador Perfect 300ml", price: 95.99, category: "Home Care", needsCode: false },
+            { name: "Condicionador Frizz Zero 300ml", price: 95.99, category: "Home Care", needsCode: false },
+            { name: "Condicionador Uso Obrigatório 300ml", price: 95.99, category: "Home Care", needsCode: false },
             { name: "Condicionador Uso Obrigatório Plus", price: 0.00, category: "Home Care", needsCode: false, outOfStock: true },
         ];
         const hc_Masks = [
@@ -331,13 +359,16 @@
             { name: "Óleo Uso Obrigatório 60ml", price: 0.00, category: "Home Care", needsCode: false, outOfStock: true },
             { name: "Spray Uso Miracle Summer", price: 0.00, category: "Home Care", needsCode: false, outOfStock: true },
             { name: "Stay Fix Strong", price: 0.00, category: "Home Care", needsCode: false, outOfStock: true },
+            { name: "Gloss Shine", price: 99.90, category: "Home Care", needsCode: false },
+            { name: "Instant Repair", price: 129.90, category: "Home Care", needsCode: false },
+            { name: "Sculpt Fix", price: 103.99, category: "Home Care", needsCode: false },
         ];
         
         const hc_Shampoo1L = [
             { name: "Shampoo Equilibrium 1L", price: 203.99, category: "Home Care", needsCode: false, outOfStock: true },
             { name: "Shampoo Infusion 1L", price: 203.99, category: "Home Care", needsCode: false },
             { name: "Shampoo Uso Obrigatório 1L", price: 159.99, category: "Home Care", needsCode: false, outOfStock: true },
-            { name: "Therapy Shampoo", price: 199.99, category: "Home Care", needsCode: false },
+            { name: "Therapy Shampoo 1L", price: 199.99, category: "Home Care", needsCode: false },
             { name: "Shampoo Nutri Infusion 1L", price: 203.99, category: "Home Care", needsCode: false, outOfStock: true },
         ];
         const hc_Cond1L = [
@@ -358,7 +389,7 @@
             { name: "Mask Uso Obrigatório (Mini)", price: 30.59, category: "Home Care", needsCode: false },
         ];
 
-        // --- CONSTRUÇÃO FINAL DOS ARRAYS COM SEÇÕES ---
+        // --- ARRAYS FINAIS ---
         const produtosProfissionais = [
             ...addSection(prof_Descolorantes, "Descolorantes & Oxidantes"),
             ...addSection(prof_Coloracao, "Coloração & Auxiliares"),
@@ -377,47 +408,139 @@
         ];
         
         let productState = { "Profissional": [], "Home Care": [] };
+        let customItems = []; // Array para itens manuais
         let currentPdfDoc = null; 
         
-        // Declarando elements no escopo global, mas inicializando vazio
         let elements = {};
 
         // --- SISTEMA DE ABAS ---
         window.switchTab = function(tabName) {
+            // Esconde todas
+            elements.tabNewOrder.classList.add('hidden');
+            elements.tabHistory.classList.add('hidden');
+            elements.tabPriceTable.classList.add('hidden');
+            
+            // Reseta botões
+            [elements.tabBtnNew, elements.tabBtnHist, elements.tabBtnPrice].forEach(btn => {
+                btn.classList.replace('text-blue-700', 'text-gray-500');
+                btn.classList.replace('bg-blue-100', 'bg-gray-50');
+            });
+
+            // Ativa selecionada
             if (tabName === 'new-order') {
                 elements.tabNewOrder.classList.remove('hidden');
-                elements.tabHistory.classList.add('hidden');
                 elements.tabBtnNew.classList.replace('text-gray-500', 'text-blue-700');
                 elements.tabBtnNew.classList.replace('bg-gray-50', 'bg-blue-100');
-                elements.tabBtnHist.classList.replace('text-blue-700', 'text-gray-500');
-                elements.tabBtnHist.classList.replace('bg-blue-100', 'bg-gray-50');
-            } else {
-                elements.tabNewOrder.classList.add('hidden');
+            } else if (tabName === 'history') {
                 elements.tabHistory.classList.remove('hidden');
                 elements.tabBtnHist.classList.replace('text-gray-500', 'text-blue-700');
                 elements.tabBtnHist.classList.replace('bg-gray-50', 'bg-blue-100');
-                elements.tabBtnNew.classList.replace('text-blue-700', 'text-gray-500');
-                elements.tabBtnNew.classList.replace('bg-blue-100', 'bg-gray-50');
                 renderHistory();
+            } else if (tabName === 'price-table') {
+                elements.tabPriceTable.classList.remove('hidden');
+                elements.tabBtnPrice.classList.replace('text-gray-500', 'text-blue-700');
+                elements.tabBtnPrice.classList.replace('bg-gray-50', 'bg-blue-100');
+                renderPriceTable();
             }
         };
 
-        // --- FUNÇÕES DE FORMATAÇÃO E UI ---
+        // --- FUNÇÕES UI ---
         const formatCurrency = val => val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         const showError = msg => { 
             if(elements.messageContent) {
                 elements.messageContent.textContent = msg; 
                 elements.messageBox.classList.remove('hidden');
                 setTimeout(() => elements.messageBox.classList.add('hidden'), 3000);
-            } else {
-                alert(msg);
-            }
+            } else alert(msg);
         };
         const hideError = () => { if(elements.messageBox) elements.messageBox.classList.add('hidden'); };
         const getCurrentMonth = () => {
             const m = new Date().toLocaleString('pt-BR', { month: 'long' });
             return m.charAt(0).toUpperCase() + m.slice(1);
         };
+
+        // --- LOGICA ITENS MANUAIS ---
+        function addManualItem() {
+            const name = document.getElementById('manual-name').value.trim();
+            const price = parseFloat(document.getElementById('manual-price').value);
+            const qty = parseInt(document.getElementById('manual-qty').value);
+
+            if (!name || isNaN(price) || isNaN(qty) || qty <= 0) {
+                alert("Preencha o nome, preço e quantidade corretamente.");
+                return;
+            }
+
+            customItems.push({
+                name: name + " (Avulso)",
+                price: price,
+                quantity: qty,
+                code: '',
+                category: 'Manual'
+            });
+
+            // Limpa inputs
+            document.getElementById('manual-name').value = '';
+            document.getElementById('manual-price').value = '';
+            document.getElementById('manual-qty').value = '1';
+
+            renderManualItems();
+            updateTotal();
+        }
+
+        function removeManualItem(index) {
+            customItems.splice(index, 1);
+            renderManualItems();
+            updateTotal();
+        }
+
+        function renderManualItems() {
+            const container = document.getElementById('manual-items-container');
+            const list = document.getElementById('manual-items-list');
+            list.innerHTML = '';
+
+            if (customItems.length === 0) {
+                container.classList.add('hidden');
+                return;
+            }
+
+            container.classList.remove('hidden');
+            customItems.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'flex justify-between items-center bg-white p-2 border border-gray-100 rounded text-sm';
+                div.innerHTML = `
+                    <span><span class="font-bold text-gray-700">${item.quantity}x</span> ${item.name} - <b>${formatCurrency(item.price)}</b></span>
+                    <button onclick="removeManualItem(${index})" class="text-red-500 hover:text-red-700 text-xs font-bold">REMOVER</button>
+                `;
+                list.appendChild(div);
+            });
+        }
+
+        // --- TABELA DE PREÇOS ---
+        function renderPriceTable() {
+            const container = document.getElementById('price-table-container');
+            container.innerHTML = '';
+
+            const renderCategoryTable = (title, products) => {
+                let html = `<div class="mb-4"><h3 class="text-lg font-bold text-gray-800 border-b-2 border-gray-300 mb-3 pb-1">${title}</h3>`;
+                html += `<table class="w-full text-sm text-left"><thead><tr class="bg-gray-100"><th class="p-2 rounded-tl">Produto</th><th class="p-2 rounded-tr text-right">Preço</th></tr></thead><tbody>`;
+                
+                let lastSection = null;
+                products.forEach((p, idx) => {
+                    const bg = idx % 2 === 0 ? 'bg-white' : 'bg-gray-50';
+                    if (p.section && p.section !== lastSection) {
+                        html += `<tr class="bg-gray-200"><td colspan="2" class="p-1 pl-2 font-bold text-xs uppercase text-gray-600">${p.section}</td></tr>`;
+                        lastSection = p.section;
+                    }
+                    html += `<tr class="${bg} border-b border-gray-100"><td class="p-2">${p.name}</td><td class="p-2 text-right font-mono">${formatCurrency(p.price)}</td></tr>`;
+                });
+                
+                html += `</tbody></table></div>`;
+                return html;
+            };
+
+            container.innerHTML += renderCategoryTable("Linha Profissional", produtosProfissionais);
+            container.innerHTML += renderCategoryTable("Linha Home Care", produtosHomeCare);
+        }
 
         // --- INICIALIZAÇÃO DE DADOS ---
         function initializeState() {
@@ -428,6 +551,8 @@
                 variants: p.multiVariant ? [] : undefined 
             }));
             productState["Home Care"] = produtosHomeCare.map(p => ({ ...p, quantity: 0, code: '' }));
+            customItems = [];
+            renderManualItems();
         }
 
         // --- RENDERIZAÇÃO DE LISTAS ---
@@ -481,11 +606,7 @@
             
             let badgeHTML = '';
             if (isOutOfStock) {
-                badgeHTML = `
-                    <div class="absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-bl-lg shadow-sm z-10">
-                        ESGOTADO
-                    </div>
-                `;
+                badgeHTML = `<div class="absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-bl-lg shadow-sm z-10">ESGOTADO</div>`;
             }
 
             if (product.multiVariant) {
@@ -496,11 +617,8 @@
                         variantsListHTML += `
                             <div class="flex justify-between items-center p-2 text-sm">
                                 <span><span class="font-bold text-gray-700">${v.quantity}x</span> Cor: ${v.code}</span>
-                                <button class="text-red-500 hover:text-red-700 p-1 remove-variant-btn" data-index="${idx}">
-                                    <i class="ph ph-trash"></i>
-                                </button>
-                            </div>
-                        `;
+                                <button class="text-red-500 hover:text-red-700 p-1 remove-variant-btn" data-index="${idx}"><i class="ph ph-trash"></i></button>
+                            </div>`;
                     });
                     variantsListHTML += '</div>';
                 }
@@ -513,7 +631,6 @@
                             <span class="text-xs font-bold text-gray-600 bg-gray-100 px-1.5 py-0.5 rounded">${formatCurrency(product.price)}</span>
                         </div>
                     </div>
-                    
                     <div class="flex gap-2 items-end mt-1 ${isOutOfStock ? 'opacity-50 pointer-events-none' : ''}">
                         <div class="flex-grow">
                             <label class="text-[10px] text-gray-500 uppercase font-bold">Numeração/Cor</label>
@@ -523,11 +640,8 @@
                             <label class="text-[10px] text-gray-500 uppercase font-bold">Qtd</label>
                             <input type="number" min="1" value="1" ${isOutOfStock ? 'disabled' : ''} class="variant-qty-input w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none text-center disabled:bg-gray-200">
                         </div>
-                        <button ${isOutOfStock ? 'disabled' : ''} class="add-variant-btn h-[34px] px-3 bg-blue-600 text-white rounded hover:bg-blue-700 transition flex items-center justify-center disabled:bg-gray-400">
-                            <i class="ph ph-plus font-bold"></i>
-                        </button>
+                        <button ${isOutOfStock ? 'disabled' : ''} class="add-variant-btn h-[34px] px-3 bg-blue-600 text-white rounded hover:bg-blue-700 transition flex items-center justify-center disabled:bg-gray-400"><i class="ph ph-plus font-bold"></i></button>
                     </div>
-                    
                     ${variantsListHTML}
                 `;
 
@@ -539,26 +653,15 @@
                     addBtn.addEventListener('click', () => {
                         const code = codeInput.value.trim();
                         const qty = parseInt(qtyInput.value);
-
-                        if (!code) {
-                            codeInput.classList.add('flash-error');
-                            return;
-                        }
-                        
+                        if (!code) { codeInput.classList.add('flash-error'); return; }
                         if (product.blockedCodes && product.blockedCodes.includes(code)) {
-                            showError(`A variação "${code}" está em falta no estoque.`);
+                            showError(`A variação "${code}" está em falta.`);
                             codeInput.classList.add('flash-error');
-                            setTimeout(() => codeInput.classList.remove('flash-error'), 500);
                             return;
                         }
-
                         if (qty <= 0) return;
-
                         product.variants.push({ code: code, quantity: qty });
-                        codeInput.value = '';
-                        qtyInput.value = '1';
-                        codeInput.focus();
-                        
+                        codeInput.value = ''; qtyInput.value = '1'; codeInput.focus();
                         card.replaceWith(createCard(product));
                         updateTotal();
                     });
@@ -576,11 +679,9 @@
             } else {
                 card.dataset.name = product.name;
                 card.dataset.category = product.category;
-
                 const codeInput = product.needsCode ? `
                     <div class="mt-2 mb-1 ${isOutOfStock ? 'opacity-50 pointer-events-none' : ''}">
-                        <input type="text" ${isOutOfStock ? 'disabled' : ''} class="color-code-input w-full px-2 py-1.5 text-xs border border-gray-300 rounded focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none disabled:bg-gray-200" 
-                            placeholder="Digite Cor/Vol" value="${product.code}">
+                        <input type="text" ${isOutOfStock ? 'disabled' : ''} class="color-code-input w-full px-2 py-1.5 text-xs border border-gray-300 rounded focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none disabled:bg-gray-200" placeholder="Digite Cor/Vol" value="${product.code}">
                     </div>` : '';
 
                 card.innerHTML = `
@@ -593,13 +694,9 @@
                         ${codeInput}
                     </div>
                     <div class="flex items-center justify-end mt-3 gap-2 ${isOutOfStock ? 'opacity-50 pointer-events-none' : ''}">
-                        <button ${isOutOfStock ? 'disabled' : ''} class="qty-btn w-7 h-7 rounded border flex items-center justify-center bg-white hover:bg-red-50 hover:text-red-500 transition disabled:bg-gray-100 disabled:text-gray-300" data-action="dec">
-                            <i class="ph ph-minus font-bold text-xs"></i>
-                        </button>
+                        <button ${isOutOfStock ? 'disabled' : ''} class="qty-btn w-7 h-7 rounded border flex items-center justify-center bg-white hover:bg-red-50 hover:text-red-500 transition disabled:bg-gray-100 disabled:text-gray-300" data-action="dec"><i class="ph ph-minus font-bold text-xs"></i></button>
                         <span class="qty-display w-6 text-center font-bold text-gray-800">${product.quantity}</span>
-                        <button ${isOutOfStock ? 'disabled' : ''} class="qty-btn w-7 h-7 rounded border flex items-center justify-center bg-white hover:bg-green-50 hover:text-green-600 transition disabled:bg-gray-100 disabled:text-gray-300" data-action="inc">
-                            <i class="ph ph-plus font-bold text-xs"></i>
-                        </button>
+                        <button ${isOutOfStock ? 'disabled' : ''} class="qty-btn w-7 h-7 rounded border flex items-center justify-center bg-white hover:bg-green-50 hover:text-green-600 transition disabled:bg-gray-100 disabled:text-gray-300" data-action="inc"><i class="ph ph-plus font-bold text-xs"></i></button>
                     </div>
                 `;
                 
@@ -610,26 +707,19 @@
                             updateQuantity(product, action, card);
                         });
                     });
-
                     const input = card.querySelector('.color-code-input');
                     if(input) {
                         input.addEventListener('input', (e) => {
                             const val = e.target.value;
                             if (product.blockedCodes && product.blockedCodes.includes(val)) {
                                 showError(`A variação "${val}" está em falta.`);
-                                e.target.classList.add('flash-error');
-                                return; 
-                            } else {
-                                e.target.classList.remove('flash-error');
-                            }
-
-                            product.code = val;
-                            updateTotal();
+                                e.target.classList.add('flash-error'); return; 
+                            } else { e.target.classList.remove('flash-error'); }
+                            product.code = val; updateTotal();
                         });
                     }
                 }
             }
-
             return card;
         }
 
@@ -637,32 +727,21 @@
             if (action === 'inc') {
                 if (product.needsCode && !product.code) {
                     const input = cardEl.querySelector('.color-code-input');
-                    if(input) {
-                        input.classList.add('flash-error');
-                        input.focus();
-                        setTimeout(() => input.classList.remove('flash-error'), 500);
-                    }
+                    if(input) { input.classList.add('flash-error'); input.focus(); setTimeout(() => input.classList.remove('flash-error'), 500); }
                 }
-                
                 if (product.needsCode && product.blockedCodes && product.blockedCodes.includes(product.code)) {
-                     showError(`A variação "${product.code}" está em falta.`);
-                     return;
+                     showError(`A variação "${product.code}" está em falta.`); return;
                 }
-
                 product.quantity++;
             } else if (action === 'dec' && product.quantity > 0) {
                 product.quantity--;
             }
-            
             const qtyDisplay = cardEl.querySelector('.qty-display');
             if(qtyDisplay) qtyDisplay.textContent = product.quantity;
-            
             if (product.quantity > 0) {
-                cardEl.classList.remove('bg-white', 'border-gray-100');
-                cardEl.classList.add('bg-blue-50', 'border-blue-300', 'shadow-md');
+                cardEl.classList.remove('bg-white', 'border-gray-100'); cardEl.classList.add('bg-blue-50', 'border-blue-300', 'shadow-md');
             } else {
-                cardEl.classList.add('bg-white', 'border-gray-100');
-                cardEl.classList.remove('bg-blue-50', 'border-blue-300', 'shadow-md');
+                cardEl.classList.add('bg-white', 'border-gray-100'); cardEl.classList.remove('bg-blue-50', 'border-blue-300', 'shadow-md');
             }
             updateTotal();
         }
@@ -677,14 +756,17 @@
                     total += p.price * variantsTotalQty;
                 } else {
                     if (p.quantity > 0 && (!p.needsCode || (p.needsCode && p.code))) {
-                        if (p.needsCode && p.blockedCodes && p.blockedCodes.includes(p.code)) {
-                            // Don't add
-                        } else {
-                            total += p.price * p.quantity;
-                        }
+                        if (p.needsCode && p.blockedCodes && p.blockedCodes.includes(p.code)) {} 
+                        else { total += p.price * p.quantity; }
                     }
                 }
             });
+
+            // Soma manuais
+            customItems.forEach(item => {
+                total += item.price * item.quantity;
+            });
+
             if(elements.totalPrice) elements.totalPrice.textContent = formatCurrency(total);
         }
 
@@ -705,32 +787,23 @@
                 if (p.multiVariant) {
                     if (p.variants.length > 0) {
                         p.variants.forEach(v => {
-                            flatItems.push({
-                                name: p.name,
-                                price: p.price,
-                                code: v.code,
-                                quantity: v.quantity
-                            });
+                            flatItems.push({ name: p.name, price: p.price, code: v.code, quantity: v.quantity });
                         });
                     }
                 } else {
                     if (p.quantity > 0) {
-                        if (p.needsCode && !p.code) {
-                            invalid.push(p);
-                        } else {
-                            if (p.needsCode && p.blockedCodes && p.blockedCodes.includes(p.code)) {
-                                // Skip
-                            } else {
-                                flatItems.push({
-                                    name: p.name,
-                                    price: p.price,
-                                    code: p.code,
-                                    quantity: p.quantity
-                                });
-                            }
+                        if (p.needsCode && !p.code) { invalid.push(p); } 
+                        else {
+                            if (p.needsCode && p.blockedCodes && p.blockedCodes.includes(p.code)) {} 
+                            else { flatItems.push({ name: p.name, price: p.price, code: p.code, quantity: p.quantity }); }
                         }
                     }
                 }
+            });
+
+            // Adiciona manuais
+            customItems.forEach(item => {
+                flatItems.push(item);
             });
             
             return { items: flatItems, invalid };
@@ -784,11 +857,8 @@
                 headStyles: { fillColor: [66, 66, 66], textColor: 255, fontStyle: 'bold' },
                 styles: { fontSize: 10, cellPadding: 3 },
                 columnStyles: {
-                    0: { cellWidth: 'auto' },
-                    1: { cellWidth: 30 },
-                    2: { cellWidth: 20, halign: 'center' },
-                    3: { cellWidth: 30, halign: 'right' },
-                    4: { cellWidth: 30, halign: 'right' }
+                    0: { cellWidth: 'auto' }, 1: { cellWidth: 30 }, 2: { cellWidth: 20, halign: 'center' },
+                    3: { cellWidth: 30, halign: 'right' }, 4: { cellWidth: 30, halign: 'right' }
                 }
             });
 
@@ -801,19 +871,12 @@
             doc.text(`VALOR TOTAL: ${formatCurrency(totalOrder)}`, pageWidth - 20, finalY + 8, { align: 'right' });
 
             saveToHistory(items, totalOrder, month, today);
-
             return { doc, month, totalOrder };
         }
 
         function saveToHistory(items, total, month, date) {
             const history = JSON.parse(localStorage.getItem('orderHistory') || '[]');
-            const newOrder = {
-                id: Date.now(),
-                date: date,
-                month: month,
-                total: total,
-                itemCount: items.length
-            };
+            const newOrder = { id: Date.now(), date: date, month: month, total: total, itemCount: items.length };
             history.unshift(newOrder); 
             localStorage.setItem('orderHistory', JSON.stringify(history));
         }
@@ -823,13 +886,8 @@
             const history = JSON.parse(localStorage.getItem('orderHistory') || '[]');
             const tbody = elements.historyTable;
             tbody.innerHTML = '';
-
-            if (history.length === 0) {
-                if(elements.emptyHistoryMsg) elements.emptyHistoryMsg.classList.remove('hidden');
-                return;
-            }
+            if (history.length === 0) { if(elements.emptyHistoryMsg) elements.emptyHistoryMsg.classList.remove('hidden'); return; }
             if(elements.emptyHistoryMsg) elements.emptyHistoryMsg.classList.add('hidden');
-
             history.forEach(order => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
@@ -837,9 +895,7 @@
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">${order.month}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${order.itemCount}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-600 font-bold">${formatCurrency(order.total)}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <button onclick="deleteHistoryItem(${order.id})" class="text-red-600 hover:text-red-900 ml-3">Excluir</button>
-                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"><button onclick="deleteHistoryItem(${order.id})" class="text-red-600 hover:text-red-900 ml-3">Excluir</button></td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -849,20 +905,16 @@
             if(!confirm("Excluir este registro do histórico?")) return;
             let history = JSON.parse(localStorage.getItem('orderHistory') || '[]');
             history = history.filter(h => h.id !== id);
-            localStorage.setItem('orderHistory', JSON.stringify(history));
-            renderHistory();
+            localStorage.setItem('orderHistory', JSON.stringify(history)); renderHistory();
         };
 
         window.clearHistory = function() {
             if(!confirm("Apagar TODO o histórico?")) return;
-            localStorage.removeItem('orderHistory');
-            renderHistory();
+            localStorage.removeItem('orderHistory'); renderHistory();
         };
 
         function downloadPdf() {
-            if (currentPdfDoc) {
-                currentPdfDoc.doc.save(`Pedido_${currentPdfDoc.month}_ErikaDaiany.pdf`);
-            }
+            if (currentPdfDoc) currentPdfDoc.doc.save(`Pedido_${currentPdfDoc.month}_ErikaDaiany.pdf`);
         }
 
         function fallbackDesktop(msg) {
@@ -874,51 +926,25 @@
 
         async function smartShare() {
             if (!currentPdfDoc) return;
-
             const blob = currentPdfDoc.doc.output('blob');
             const file = new File([blob], `Pedido_${currentPdfDoc.month}_ErikaDaiany.pdf`, { type: 'application/pdf' });
-            
             const msg = `Bom dia ${CONTACT_NAME}, seguem em anexo o pedido ${currentPdfDoc.month}.`;
-
             if (navigator.share && navigator.canShare({ files: [file] })) {
-                try {
-                    await navigator.share({
-                        files: [file],
-                        title: 'Pedido Studio Erika Daiany',
-                        text: msg
-                    });
-                } catch (error) {
-                    if (error.name !== 'AbortError') {
-                        fallbackDesktop(msg);
-                    }
-                }
-            } else {
-                fallbackDesktop(msg);
-            }
+                try { await navigator.share({ files: [file], title: 'Pedido Studio Erika Daiany', text: msg }); } 
+                catch (error) { if (error.name !== 'AbortError') fallbackDesktop(msg); }
+            } else { fallbackDesktop(msg); }
         }
 
-        // --- DEFININDO openPreview E closeModal ANTES DO USO ---
         function openPreview() {
             const result = preparePdf();
             if (!result) return;
-
             currentPdfDoc = result; 
-            
             const pdfBlob = result.doc.output('blob');
             const blobUrl = URL.createObjectURL(pdfBlob);
-            
             if(elements.modalFrame) elements.modalFrame.src = blobUrl;
             if(elements.externalPdfLink) elements.externalPdfLink.href = blobUrl;
             if(elements.modal) elements.modal.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
-
-            if (window.innerWidth < 640) {
-                if(elements.modalFrame) elements.modalFrame.classList.add('hidden');
-                if(elements.mobilePlaceholder) elements.mobilePlaceholder.classList.remove('hidden');
-            } else {
-                if(elements.modalFrame) elements.modalFrame.classList.remove('hidden');
-                if(elements.mobilePlaceholder) elements.mobilePlaceholder.classList.add('hidden');
-            }
         }
 
         window.closeModal = function() {
@@ -927,9 +953,7 @@
             if(elements.modalFrame) elements.modalFrame.src = '';
         };
 
-        // --- EVENT LISTENERS GLOBAIS ---
         document.addEventListener('DOMContentLoaded', () => {
-            // Inicializa elementos aqui para garantir que o DOM existe
             elements = {
                 profList: document.getElementById('professional-list'),
                 homeList: document.getElementById('homecare-list'),
@@ -944,16 +968,18 @@
                 searchInput: document.getElementById('search-input'),
                 tabNewOrder: document.getElementById('tab-new-order'),
                 tabHistory: document.getElementById('tab-history'),
+                tabPriceTable: document.getElementById('tab-price-table'),
                 tabBtnNew: document.getElementById('tab-btn-new-order'),
                 tabBtnHist: document.getElementById('tab-btn-history'),
+                tabBtnPrice: document.getElementById('tab-btn-price-table'),
                 historyTable: document.getElementById('history-table-body'),
                 emptyHistoryMsg: document.getElementById('empty-history-msg'),
                 modal: document.getElementById('preview-modal'),
                 modalFrame: document.getElementById('pdf-preview-frame'),
                 btnShareSmart: document.getElementById('btn-share-smart'),
                 btnDownloadOnly: document.getElementById('btn-download-only'),
-                mobilePlaceholder: document.getElementById('mobile-pdf-placeholder'),
-                externalPdfLink: document.getElementById('external-pdf-link')
+                externalPdfLink: document.getElementById('external-pdf-link'),
+                btnAddManual: document.getElementById('btn-add-manual')
             };
 
             initializeState();
@@ -962,11 +988,10 @@
             if(elements.searchInput) elements.searchInput.addEventListener('input', (e) => renderLists(e.target.value));
             if(elements.clearBtn) elements.clearBtn.addEventListener('click', clearOrder);
             if(elements.previewBtn) elements.previewBtn.addEventListener('click', openPreview);
-            
             if(elements.btnShareSmart) elements.btnShareSmart.addEventListener('click', smartShare);
             if(elements.btnDownloadOnly) elements.btnDownloadOnly.addEventListener('click', downloadPdf);
+            if(elements.btnAddManual) elements.btnAddManual.addEventListener('click', addManualItem);
         });
-
     </script>
 </body>
 </html>
